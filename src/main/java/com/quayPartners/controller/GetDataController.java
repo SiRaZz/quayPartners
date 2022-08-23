@@ -19,7 +19,6 @@ public class GetDataController {
 
     @PostMapping(value = "/getData", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getStockInfoByCriteria(@RequestBody FilterCriteria data) throws URISyntaxException, IOException, InterruptedException {
-
         return stockService.getStockData(data);
     }
 

@@ -2,7 +2,6 @@ package com.quayPartners.service;
 
 import com.quayPartners.criteria.FilterCriteria;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -27,6 +26,7 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public ResponseEntity<?> getStockData(FilterCriteria criteria) throws IOException, InterruptedException, URISyntaxException {
+
         MultiValueMap<String, String> filterMap = new LinkedMultiValueMap<>();
         filterMap.add("start_date", criteria.getStartDate());
         filterMap.add("end_date", criteria.getEndDate());
@@ -40,13 +40,13 @@ public class StockServiceImpl implements StockService {
                 .queryParam("api_key", apiKey)
                 .buildAndExpand(criteria.getStockTinkerName());
 
-        HttpRequest request  = HttpRequest.newBuilder()
-                .uri(new URI(uriComponents.toUriString()))
-                .GET()
-                .build();
+            HttpRequest request  = HttpRequest.newBuilder()
+                    .uri(new URI(uriComponents.toUriString()))
+                    .GET()
+                    .build();
 
-        HttpClient client = HttpClient.newHttpClient();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return new ResponseEntity<>(response.body(), HttpStatus.OK);
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return ResponseEntity.status(response.statusCode()).body(response.body());
     }
 }

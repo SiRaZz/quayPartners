@@ -1,5 +1,19 @@
 var app = angular.module("app", ["apexcharts"])
 app.service('StockService',['$http', function ($http) {
+
+    this.getStockData = function getStockData(data) {
+    $http.post('/getData', data,{
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+        }
+    }).then(function(response) {
+        return response;
+    }, function(response) {
+        console.log(response.status)
+        response.data
+    })
+    };
+
     this.getStockData = function getStockData(data) {
         return $http.post('/getData', data,{
             headers: {
@@ -16,7 +30,7 @@ app.controller('StockController', ['$scope','StockService', '$filter', function 
     $scope.chart = {
                 chart: {
                     type: 'candlestick',
-                    height: 350
+                    height: 1000
                 },
                 title: {
                     text: '',
@@ -26,7 +40,8 @@ app.controller('StockController', ['$scope','StockService', '$filter', function 
                     type: 'datetime',
                     labels: {
                         format: 'MM/yyyy',
-                    }
+                    },
+                    tickPlacement: 'between'
                 },
                 yaxis: {
                     tooltip: {
@@ -91,8 +106,9 @@ app.controller('StockController', ['$scope','StockService', '$filter', function 
             stockTinkerName: $scope.stockTinkerName,
             startDate  : $scope.startDate,
             endDate  : $scope.endDate,
-            collapse : 'monthly'
+            collapse : $scope.collapse
         }
+
         StockService.getStockData(data)
             .then(function success(response){
                 $scope.bar.title.text  = response.data.dataset.name;
@@ -110,8 +126,6 @@ app.controller('StockController', ['$scope','StockService', '$filter', function 
                     $scope.bar.xaxis.categories.push(stockInfo[0]);
                     $scope.bar.series[0].data.push(stockInfo[5]);
                 }
-                console.log("atejo cia");
-
             });
     }
 }]);

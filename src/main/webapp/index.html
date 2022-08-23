@@ -26,9 +26,18 @@
 		<label for="endDate">End date:</label>
 		<input type="date" id="endDate" name="input" ng-model="endDate"
 			   placeholder="yyyy-MM-dd" />
+		<label for="collapseName">Collapse: </label><br>
+		<select name="collapse" id="collapseName" ng-model="collapse">
+			<option value="daily">Daily</option>
+			<option value="weekly">Weekly</option>
+			<option value="monthly">Monthly</option>
+			<option value="quarterly">Quarterly</option>
+			<option value="annual">Annual</option>
+
+		</select>
 		<button ng-click="updateData()">Refresh Charts</button>
 		<apexcharts options="bar"></apexcharts>
-		<apexcharts options="chart"></apexcharts>
+		<apexcharts style="height: 1000px" options="chart"></apexcharts>
 
 	</div>
 </body>
