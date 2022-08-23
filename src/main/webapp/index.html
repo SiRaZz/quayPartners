@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+<meta charset="ISO-8859-1">
+<title>User CRUD</title>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+<script src="view/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.8.3/apexcharts.min.js"></script>
+<script type="text/javascript" src="/module/apexcharts.angularjs.min.js"></script>
+</head>
+<body>
+	<div ng-controller="StockController">
+		<label for="stockName">Stock name: </label><br>
+		<select name="stockName" id="stockName" ng-model="stockTinkerName">
+			<option value="AAPL">AAPL</option>
+
+			<option value="AMZN">Amazon</option>
+
+			<option value="TSLA">Tesla</option>
+
+		</select>
+		<label for="startDate">Start date:</label>
+		<input type="date" id="startDate" name="input" ng-model="startDate"
+			   placeholder="yyyy-MM-dd" />
+		<label for="endDate">End date:</label>
+		<input type="date" id="endDate" name="input" ng-model="endDate"
+			   placeholder="yyyy-MM-dd" />
+		<button ng-click="updateData()">Refresh Charts</button>
+		<apexcharts options="bar"></apexcharts>
+		<apexcharts options="chart"></apexcharts>
+
+	</div>
+</body>
+</html>
