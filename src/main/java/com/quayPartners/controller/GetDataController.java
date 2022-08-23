@@ -18,8 +18,8 @@ public class GetDataController {
     private StockService stockService;
 
     @PostMapping(value = "/getData", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getStockInfoByCriteria(@RequestBody FilterCriteria data) throws URISyntaxException, IOException, InterruptedException {
-        return stockService.getStockData(data);
+    public ResponseEntity<?> getStockInfoByCriteria(@RequestBody FilterCriteria filterCriteria) throws URISyntaxException, IOException, InterruptedException {
+        return stockService.getStockData(filterCriteria);
     }
 
 }

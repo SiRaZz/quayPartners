@@ -1,7 +1,12 @@
 package com.quayPartners.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quayPartners.criteria.FilterCriteria;
+import com.quayPartners.dto.DataSet;
+import com.quayPartners.dto.StockInfo;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -25,7 +30,7 @@ public class StockServiceImpl implements StockService {
     private final String url = null;
 
     @Override
-    public ResponseEntity<?> getStockData(FilterCriteria criteria) throws IOException, InterruptedException, URISyntaxException {
+    public ResponseEntity<StockInfo> getStockData(FilterCriteria criteria) throws IOException, InterruptedException, URISyntaxException {
 
         MultiValueMap<String, String> filterMap = new LinkedMultiValueMap<>();
         filterMap.add("start_date", criteria.getStartDate());
@@ -47,6 +52,9 @@ public class StockServiceImpl implements StockService {
 
             HttpClient client = HttpClient.newHttpClient();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return ResponseEntity.status(response.statusCode()).body(response.body());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        StockInfo stockInfo = objectMapper.readValue(response.body(), StockInfo.class);
+        return ResponseEntity.status(HttpStatusCode.valueOf(response.statusCode())).body(stockInfo);
     }
 }
