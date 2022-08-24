@@ -2,10 +2,12 @@ package com.quayPartners.criteria;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class FilterCriteria {
     private String stockTinkerName;
-    private String startDate;
-    private String endDate;
+    private Date startDate;
+    private Date endDate;
     private String collapse;
 }

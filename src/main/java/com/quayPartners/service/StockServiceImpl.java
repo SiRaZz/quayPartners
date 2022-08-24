@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quayPartners.criteria.FilterCriteria;
 import com.quayPartners.dto.DataSet;
 import com.quayPartners.dto.StockInfo;
+import com.quayPartners.model.StockInfoJpa;
+import com.quayPartners.repository.StockInfoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -20,6 +23,9 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class StockServiceImpl implements StockService {
@@ -29,12 +35,18 @@ public class StockServiceImpl implements StockService {
     @Value("${nasdaq.url}")
     private final String url = null;
 
+    @Autowired
+    private StockInfoRepository  stockInfoRepository;
+
     @Override
     public ResponseEntity<StockInfo> getStockData(FilterCriteria criteria) throws IOException, InterruptedException, URISyntaxException {
-
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        HttpResponse<String> response = null;
+        StockInfo stockInfo = null;
+        ObjectMapper objectMapper = new ObjectMapper();
         MultiValueMap<String, String> filterMap = new LinkedMultiValueMap<>();
-        filterMap.add("start_date", criteria.getStartDate());
-        filterMap.add("end_date", criteria.getEndDate());
+        filterMap.add("start_date", formatter.format(criteria.getStartDate()));
+        filterMap.add("end_date", formatter.format(criteria.getEndDate()));
         filterMap.add("collapse", criteria.getCollapse());
 
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
@@ -51,10 +63,15 @@ public class StockServiceImpl implements StockService {
                     .build();
 
             HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        StockInfo stockInfo = objectMapper.readValue(response.body(), StockInfo.class);
-        return ResponseEntity.status(HttpStatusCode.valueOf(response.statusCode())).body(stockInfo);
+            var stockInfoJpa =  stockInfoRepository.findStockInfo(criteria.getStartDate(), criteria.getEndDate(), criteria.getStockTinkerName(), criteria.getCollapse());
+            if(stockInfoJpa != null) {
+                stockInfo = objectMapper.readValue(stockInfoJpa.getResponse(), StockInfo.class);
+                return ResponseEntity.status(HttpStatusCode.valueOf(stockInfoJpa.getStatusCode())).body(stockInfo);
+            } else {
+                response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                stockInfoRepository.save(new StockInfoJpa(criteria.getStockTinkerName(), criteria.getStartDate(), criteria.getEndDate(), criteria.getCollapse(), response.statusCode(), response.body()));
+                stockInfo = objectMapper.readValue(response.body(), StockInfo.class);
+                return ResponseEntity.status(HttpStatusCode.valueOf(response.statusCode())).body(stockInfo);
+            }
     }
 }
