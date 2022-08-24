@@ -1,4 +1,4 @@
-package com.quayPartners.model;
+package com.quayPartners.repository;
 
 import jakarta.persistence.*;
 import lombok.*;
