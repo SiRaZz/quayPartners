@@ -35,7 +35,19 @@
 			<option value="annual">Annual</option>
 
 		</select>
+		<label for="days">Moving average: </label><br>
+		<select name="days" id="days" ng-model="day">
+			<option value="5">5</option>
+			<option value="20">20</option>
+
+		</select>
 		<button ng-click="updateData()">Refresh Charts</button>
+		<ul ng-show="simpleMovingAverageMessage">
+			<li ng-repeat="i in simpleMovingAverage">
+				{{i}}
+			</li>
+		</ul>
+		<p ng-repeat="i in simpleMovingAverage">{{i}}</p>
 		<apexcharts options="bar"></apexcharts>
 		<apexcharts style="height: 1000px" options="chart"></apexcharts>
 

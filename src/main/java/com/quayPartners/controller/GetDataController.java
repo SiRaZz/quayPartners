@@ -9,16 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 @RestController
 public class GetDataController {
     @Autowired
     private StockService stockService;
 
     @PostMapping(value = "/getData", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getStockInfoByCriteria(@RequestBody FilterCriteria filterCriteria) throws URISyntaxException, IOException, InterruptedException {
+    public ResponseEntity<?> getStockInfoByCriteria(@RequestBody FilterCriteria filterCriteria) {
         return stockService.getStockData(filterCriteria);
     }
 

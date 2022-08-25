@@ -1,21 +1,8 @@
 var app = angular.module("app", ["apexcharts"])
-app.service('StockService',['$http', function ($http) {
+app.service('StockService', ['$http', function ($http) {
 
     this.getStockData = function getStockData(data) {
-    $http.post('/getData', data,{
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8'
-        }
-    }).then(function(response) {
-        return response;
-    }, function(response) {
-        console.log(response.status)
-        response.data
-    })
-    };
-
-    this.getStockData = function getStockData(data) {
-        return $http.post('/getData', data,{
+        return $http.post('/getData', data, {
             headers: {
                 'Content-Type': 'application/json; charset=utf-8'
             }
@@ -23,31 +10,34 @@ app.service('StockService',['$http', function ($http) {
     }
 }
 ]);
-app.controller('StockController', ['$scope','StockService', '$filter', function ($scope, StockService, $filter) {
+app.controller('StockController', ['$scope', 'StockService', '$filter', function ($scope, StockService, $filter) {
     $scope.startDate = undefined;
     $scope.endDate = undefined;
     $scope.stockTinkerName = undefined;
+    $scope.simpleMovingAverage = undefined;
+    $scope.day = undefined;
+    $scope.simpleMovingAverageMessage = "";
     $scope.chart = {
-                chart: {
-                    type: 'candlestick',
-                    height: 1000
-                },
-                title: {
-                    text: '',
-                    align: 'left'
-                },
-                xaxis: {
-                    type: 'datetime',
-                    labels: {
-                        format: 'MM/yyyy',
-                    },
-                    tickPlacement: 'between'
-                },
-                yaxis: {
-                    tooltip: {
-                        enabled: true
-                    }
-                },
+        chart: {
+            type: 'candlestick',
+            height: 1000
+        },
+        title: {
+            text: '',
+            align: 'left'
+        },
+        xaxis: {
+            type: 'datetime',
+            labels: {
+                format: 'MM/yyyy',
+            },
+            tickPlacement: 'between'
+        },
+        yaxis: {
+            tooltip: {
+                enabled: true
+            }
+        },
         series: [
             {
                 name: "candle",
@@ -56,7 +46,8 @@ app.controller('StockController', ['$scope','StockService', '$filter', function 
                         x: new Date(1538778600000),
                         y: [6629.81, 6650.5, 6623.04, 6633.33]
                     },
-                    ]}]
+                ]
+            }]
     };
 
     $scope.bar = {
@@ -99,33 +90,38 @@ app.controller('StockController', ['$scope','StockService', '$filter', function 
     $scope.updateData = function () {
         $scope.chart.series[0].data = [];
         $scope.bar.series[0].data = [];
-        $scope.bar.xaxis.categories  = [];
+        $scope.bar.xaxis.categories = [];
         $scope.startDate = $filter('date')($scope.startDate, 'yyyy-MM-dd');
         $scope.endDate = $filter('date')($scope.endDate, 'yyyy-MM-dd');
-        var data =  {
+        var data = {
             stockTinkerName: $scope.stockTinkerName,
-            startDate  : $scope.startDate,
-            endDate  : $scope.endDate,
-            collapse : $scope.collapse
+            startDate: $scope.startDate,
+            endDate: $scope.endDate,
+            collapse: $scope.collapse,
+            daySize: $scope.day
         }
 
-        StockService.getStockData(data)
-            .then(function success(response){
-                $scope.bar.title.text  = response.data.dataset.name;
-                for (var i = 0; i < response.data.dataset.data.length; i++) {
-                    var dataEntry = {
-                        x : '',
-                        y  : []
-                    };
-                    const stockInfo = response.data.dataset.data[i];
-                    dataEntry.x = (new Date(stockInfo[0].replace('-','/'))).getTime();
-                    for (var j = 1; j <= 4; j++) {
-                        dataEntry.y.push(stockInfo[j]);
-                    }
-                    $scope.chart.series[0].data.push(dataEntry);
-                    $scope.bar.xaxis.categories.push(stockInfo[0]);
-                    $scope.bar.series[0].data.push(stockInfo[5]);
+        StockService.getStockData(data).then(function (response) {
+            $scope.bar.title.text = response.data.dataset.name;
+            $scope.simpleMovingAverage = response.data.simpleMovingAverageList;
+            $scope.simpleMovingAverageMessage = response.data.simpleMovingAverageMessage;
+            for (var i = 0; i < response.data.dataset.data.length; i++) {
+                var dataEntry = {
+                    x: '',
+                    y: []
+                };
+                const stockInfo = response.data.dataset.data[i];
+                dataEntry.x = (new Date(stockInfo[0].replace('-', '/'))).getTime();
+                for (var j = 1; j <= 4; j++) {
+                    dataEntry.y.push(stockInfo[j]);
                 }
-            });
+                $scope.chart.series[0].data.push(dataEntry);
+                $scope.bar.xaxis.categories.push(stockInfo[0]);
+                $scope.bar.series[0].data.push(stockInfo[5]);
+            }
+        }, function (error) {
+            console.log("error")
+        });
+
     }
 }]);

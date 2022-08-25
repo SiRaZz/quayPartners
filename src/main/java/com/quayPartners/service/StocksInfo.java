@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -14,10 +15,14 @@ import java.util.Map;
 @JsonPropertyOrder({
         "dataset"
 })
-public class StockInfo {
+public class StocksInfo {
     @JsonProperty("dataset")
     private DataSet dataset;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<>();
+
+    private List<Double> simpleMovingAverageList;
+
+    private String simpleMovingAverageMessage;
 
 }
