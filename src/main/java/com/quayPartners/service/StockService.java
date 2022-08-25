@@ -2,9 +2,9 @@ package com.quayPartners.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quayPartners.criteria.FilterCriteria;
-import com.quayPartners.dto.StockInfo;
 import com.quayPartners.repository.StockInfoJpa;
 import com.quayPartners.repository.StockInfoRepository;
+import net.sf.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -23,6 +24,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class StockService {
 
@@ -38,7 +42,7 @@ public class StockService {
         HttpResponse<String> response = null;
         ObjectMapper objectMapper = new ObjectMapper();
 
-        var stockInfoJpa = stockInfoRepository.findStockInfo(criteria.getStartDate(), criteria.getEndDate(), criteria.getStockTinkerName(), criteria.getCollapse());
+        var stockInfoJpa = stockInfoRepository.findStockInfoJpaByStartDateAndEndDateAndStockTinkerNameAndCollapse(criteria.getStartDate(), criteria.getEndDate(), criteria.getStockTinkerName(), criteria.getCollapse());
         if (stockInfoJpa != null) {
             return ResponseEntity.status(HttpStatusCode.valueOf(stockInfoJpa.getStatusCode())).body(objectMapper.readValue(stockInfoJpa.getResponse(), StockInfo.class));
         } else {
@@ -57,12 +61,12 @@ public class StockService {
                 .scheme("https")
                 .host(url)
                 .path("{stockTickerName}.json")
-                .queryParams(makeFilterMap(criteria))
+                .queryParams(buildFilterMap(criteria))
                 .queryParam("api_key", apiKey)
                 .buildAndExpand(criteria.getStockTinkerName());
     }
 
-    private MultiValueMap<String, String> makeFilterMap(FilterCriteria criteria) {
+    private MultiValueMap<String, String> buildFilterMap(FilterCriteria criteria) {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         MultiValueMap<String, String> filterMap = new LinkedMultiValueMap<>();
         filterMap.add("start_date", formatter.format(criteria.getStartDate()));

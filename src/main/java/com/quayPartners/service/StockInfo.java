@@ -1,4 +1,4 @@
-package com.quayPartners.dto;
+package com.quayPartners.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
