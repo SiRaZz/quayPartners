@@ -42,12 +42,12 @@
 
 		</select>
 		<button ng-click="updateData()">Refresh Charts</button>
-		<ul ng-show="simpleMovingAverageMessage">
+		<ul ng-show="!simpleMovingAverageMessage">
 			<li ng-repeat="i in simpleMovingAverage">
 				{{i}}
 			</li>
 		</ul>
-		<p ng-repeat="i in simpleMovingAverage">{{i}}</p>
+		<p ng-show="simpleMovingAverageMessage">{{simpleMovingAverageMessage}}</p>
 		<apexcharts options="bar"></apexcharts>
 		<apexcharts style="height: 1000px" options="chart"></apexcharts>
 

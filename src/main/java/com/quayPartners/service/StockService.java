@@ -81,7 +81,6 @@ public class StockService {
         filterMap.add("end_date", formatter.format(criteria.getEndDate()));
         filterMap.add("collapse", criteria.getCollapse());
         return filterMap;
-
     }
 
     private StocksInfo calculateSimpleMovingAverage(StocksInfo info, int daySize) {
@@ -91,16 +90,11 @@ public class StockService {
             for (List<String> list : info.getDataset().getData()) {
                 closingPrices.add(Double.parseDouble(list.get(4)));
             }
-            System.out.println(closingPrices);
             for (int i = 0; i + daySize <= closingPrices.size(); i++) {
-
                 double sum = 0;
                 for (int j = i; j < i + daySize; j++) {
                     sum += closingPrices.get(j);
-                    System.out.println(sum);
                 }
-
-                System.out.println();
                 double average = sum / daySize;
                 simpleMovingAverage.add(average);
             }

@@ -1,7 +1,8 @@
 package com.quayPartners.repository;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.Date;
@@ -9,9 +10,9 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@Table( name = "STOCK_INFO")
+@Table(name = "STOCK_INFO")
 @Cacheable
-@org.hibernate.annotations.Cache( usage = CacheConcurrencyStrategy.READ_ONLY)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class StockInfoJpa {
 
     @Id
@@ -30,7 +31,7 @@ public class StockInfoJpa {
     private int statusCode;
     @Column
     @Lob
-    private String  response;
+    private String response;
 
 
     public StockInfoJpa(String stockTinkerName, Date startDate, Date endDate, String collapse, int statusCode, String response) {

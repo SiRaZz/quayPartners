@@ -74,7 +74,7 @@ app.controller('StockController', ['$scope', 'StockService', '$filter', function
         },
         grid: {
             row: {
-                colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                colors: ['#f3f3f3', 'transparent'],
                 opacity: 0.5
             },
         },
@@ -120,7 +120,7 @@ app.controller('StockController', ['$scope', 'StockService', '$filter', function
                 $scope.bar.series[0].data.push(stockInfo[5]);
             }
         }, function (error) {
-            console.log("error")
+            console.log(error);
         });
 
     }
